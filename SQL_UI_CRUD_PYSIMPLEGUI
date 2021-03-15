@@ -1,0 +1,213 @@
+from mysql import connector
+from getpass import getpass
+import pandas as pd
+import PySimpleGUI as sg
+
+####################### function for customizable query. ####################
+def connectionquery(query):   
+    with connector.connect(
+      host="localhost",
+      user="root",
+      password="",
+      database= "sakila"
+        ) as mysql_con:
+        cur= mysql_con.cursor()
+        cur.execute(query)
+        rows = cur.fetchall()
+        for row in rows:
+            rows
+            return rows
+        return rows
+
+######################## function for insert event #########################
+
+def insertquery(actorid,firstname,lastname):
+    with connector.connect(
+      host="localhost",
+      user="root",
+      password="",
+      database= "sakila"
+        ) as mysql_con:
+        cur= mysql_con.cursor()
+        qry = '''INSERT INTO actor(actor_id,first_name,last_name) VALUES (%s, %s, %s)'''
+        val = (actorid,firstname,lastname)
+        cur.execute(qry,val)
+        mysql_con.commit()  
+        
+######################## function for delete event #########################
+
+def delquery(delid):
+    with connector.connect(
+      host="localhost",
+      user="root",
+      password="",
+      database= "sakila"
+        ) as mysql_con:
+        cur= mysql_con.cursor()        
+        qry = '''DELETE FROM ACTOR WHERE actor_id = %s''' %(delid)
+        cur.execute(qry)
+        mysql_con.commit()
+        
+######################## function for delete event ########################
+
+def fetch():
+    with connector.connect(
+      host="localhost",
+      user="root",
+      password="",
+      database= "sakila"
+        ) as mysql_con:
+        cur= mysql_con.cursor()        
+        qry='''Select * from ACTOR'''
+        cur.execute(qry)
+        rows = cur.fetchall()
+        for row in rows:
+            rows
+            return rows
+        return rows
+    
+####################### copies of each movie exists in the inventory #####################
+
+def numcopies():
+    with connector.connect(
+      host="localhost",
+      user="root",
+      password="",
+      database= "sakila"
+        ) as mysql_con:
+        cur= mysql_con.cursor()        
+        qry='''select inventory.film_id, film.title, count(inventory.film_id) from inventory 
+               inner join film on film.film_id = inventory.film_id group by inventory.film_id'''
+        cur.execute(qry)
+        rows = cur.fetchall()
+        for row in rows:
+            rows
+            return rows
+        return rows
+    
+############ All actors in the film "AMERICAN CIRCUS" ###################
+
+def circus():
+    with connector.connect(
+      host="localhost",
+      user="root",
+      password="",
+      database= "sakila"
+        ) as mysql_con:
+        cur= mysql_con.cursor()        
+        qry='''select actor.first_name, actor.last_name from actor
+where actor.actor_id in (
+select actor_id from film_actor where 
+film_id = (select film_id from film where title ='AMERICAN CIRCUS'))'''
+        cur.execute(qry)
+        rows = cur.fetchall()
+        for row in rows:
+            rows
+            return rows
+        return rows
+
+    
+############### Movie Title and Actor First Name #########################
+
+def filact():
+    with connector.connect(
+      host="localhost",
+      user="root",
+      password="",
+      database= "sakila"
+        ) as mysql_con:
+        cur= mysql_con.cursor()        
+        qry='''select film.title, actor.first_name
+from film_actor inner join film on film_actor.film_id = film.film_id
+inner join actor on actor.actor_id = film_actor.actor_id
+order by film.title;'''
+        cur.execute(qry)
+        rows = cur.fetchall()
+        for row in rows:
+            rows
+            return rows
+        return rows
+
+
+sg.theme('BluePurple')
+
+col_layout = [[sg.Text("Actor DB Pre-Defined Queries")], 
+              [sg.Button("Copies in Inventory",key="copies", size =(22,1))],
+              [sg.Button("American Circus Actors",key="amecir",size =(22,1))],
+              [sg.Button("Title and Actor First Name",key="filacts",size =(22,1))]
+    
+]
+layout = [
+          
+    [sg.Text("Enter your query here for any table in sakila DB:")],
+          
+    [sg.Input(key='query', size=(60,2)),
+           sg.Button('Execute Query',key='directquery')],
+          
+    [sg.Text("")],
+          
+    [sg.Text("Enter values to insert into 'ACTOR' table:- ",text_color='red',font=("Helvetica", 15))],
+          [sg.Text('Enter Actor ID :-',size=(26,1)),
+           sg.Input(key='actorid', size=(20,1))],
+          
+    [sg.Text('Enter First Name of the actor :-',size=(26,1)),
+           sg.Input(key='firstname', size=(20,1))],
+          
+    [sg.Text('Enter Last name of the actor :-',size=(26,1)),
+           sg.Input(key='lastname', size=(20,1))],
+          
+    [sg.Button('Insert', key='_insert'),sg.Button('Fetch', key ='_fetch')],
+          
+    [sg.Text("")],
+          
+    [sg.Text("Enter the Actor ID to delete the record:- "), sg.Input(key='delid', size=(5,1)), 
+     sg.Button('Delete', key ='_del')],
+          
+    [sg.Text('', key='updates',text_color='green',size=(0,1))],
+          
+    [sg.Text('Yor Output will be displayed here:',text_color='red',font=("Helvetica", 15))],
+          
+    [sg.Listbox("",key='display', size=(130, 15)), sg.Column(col_layout)],
+    
+    [sg.Button('Exit',size=(10,1))]
+         ]
+
+window = sg.Window('Sakila Database Editor', layout)
+while True: 
+    event, values = window.read() 
+    #print(event, values) 
+      
+    if event == 'directquery':        
+        data = connectionquery(values['query'])        
+        window['display'].Update(data)
+        
+    elif event == '_insert':
+        insertquery(values['actorid'],values['firstname'],values['lastname'])
+        data = "Table updated, Please hit the Fetch button to see the contents of the updated table"
+        window['updates'].Update(data)
+        
+    elif event == '_fetch':
+        data = fetch()        
+        window['display'].Update(data)
+        
+    elif event == '_del':
+        delquery(values['delid'])
+        data = "Values Deleted from Actor table, Hit the fetch button to check and confirm"
+        window['updates'].Update(data)
+        
+    elif event == 'copies':
+        data = numcopies()        
+        window['display'].Update(data)
+        
+    elif event == 'amecir':
+        data = circus()        
+        window['display'].Update(data)
+        
+    elif event == 'filacts':
+        data = filact()
+        window['display'].Update(data)
+        
+    else :
+        break
+  
+window.close() 

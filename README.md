@@ -8,10 +8,15 @@ Adding a text on the image
 The project is not very efficient, and has its own set of limitations. 
 But gives you an outline on how an image editor looks like, where you will be able to develop according to your further requirements.
 
-The **SQL_UI** file is a UI for connecting to Sakila DataBase and perform various CRUD operations. The UI can perform basic functions but 
-it is not fool proof, as there are no warning/error messages set if the input given is wrong or how it should be given. UPDATE functionality 
-has not been defined as it is mostly similar to delete.
+**SQL_UI_CRUD_PYSIMPLEGUI**
 
-Te **Face and Object Classificaton** file is a Open CV based application which uses Harr Cascade files to detect random Objects and Faces and classify between them.
-To identify a face, a Pre-Existing Harr Cascade has been used, which detects frontal face images. And to detect objects a cascade file has been trained with atound 2000 
-images of different objects. 
+The **SQL_UI** file is a simple desktop based UI application for connecting to Sakila DataBaseof the MY SQL and perform various CRUD operations. The UI can perform basic functions but 
+it is not fool proof, as there are no warning/error messages set if the input given is wrong or on how the input should be given. UPDATE functionality has not been defined as it is similar to delete.
+
+**Face and Object classification**
+
+The **Face and Object Classificaton** file is a Open CV based application which uses Harr Cascade files to detect random Objects and Faces and classify between them.
+To identify a face, a Pre-Existing Harr Cascade has been used, which detects frontal face images. And to detect objects a cascade file has been trained with around 2000 
+images of different objects.
+**haarcascade_frontalface_default.xml** - is the Pre-Existing Harr Cascade file
+**smokingcascade.xml** - is the self-trained using image files.

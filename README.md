@@ -1,5 +1,5 @@
 # Python
-The **image_editor** project is a simple Image editing tool. Where the operations performed are.
+The **image_editor.py** project is a simple Image editing tool. Where the operations performed are.
 
 Image Re-sizing
 Image rotation To any required degree
